@@ -12,3 +12,7 @@ I want to feel confident in assessing my strengths and continued weaknesses at t
 Wrangling data
 Data visualization
 Foundations of R 
+
+####Favorite Open Science Tools
+Github
+ORCID
