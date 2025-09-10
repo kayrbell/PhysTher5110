@@ -1,0 +1,84 @@
+% Task 1
+num1 = 15;
+num2 = 7;
+
+sum_result = num1 + num2;
+diff_result = num1 - num2;
+prod_result = num1 * num2;
+quotient_result = num1 / num2;
+
+disp("Task 1 Results:");
+disp(['Sum: ', num2str(sum_result)]);
+disp(['Difference: ', num2str(diff_result)]);
+disp(['Product: ', num2str(prod_result)]);
+disp(['Quotient: ', num2str(quotient_result)]);
+
+% Task 2
+ages = [25, 30, 22, 40, 28];
+
+average_age = mean(ages);
+updated_ages = ages + 5;
+
+disp(" ");
+disp("Task 2 Results:");
+disp(['Average Age: ', num2str(average_age)]);
+disp('Updated Ages:');
+disp(updated_ages);
+
+
+% Task 3
+temperature = 28;
+
+if temperature > 25
+    disp("It's a hot day!");
+else
+    disp("It's a pleasant day!");
+end
+
+
+% Task 4
+disp(" ");
+disp("Task 4 Results:");
+for i = 1:10
+    square = i^2;
+    disp([num2str(i), ': ', num2str(square)]);
+end
+
+
+% Task 5
+function area = calculate_area(length, width)
+    area = length * width;
+end
+
+rectangle_length = 8;
+rectangle_width = 5;
+
+area_result = calculate_area(rectangle_length, rectangle_width);
+
+disp(" ");
+disp("Task 5 Results:");
+disp(['Area of Rectangle: ', num2str(area_result)]);
+
+
+% Task 6
+student_names = ["Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Hannah", "Ivan"];
+grades = ["Freshman", "Sophomore", "Junior"];
+scores = randi([60, 100], 9 * length(grades), 1);
+
+name_col = repmat(student_names', length(grades), 1);
+grade_col = repelem(grades', length(student_names));
+score_col = scores;
+
+students = table(name_col, grade_col, score_col, ...
+    'VariableNames', {'name', 'grade', 'score'});
+
+% Compute average scores by grade
+[G, gradeNames] = findgroups(students.grade);
+average_scores = splitapply(@mean, students.score, G);
+
+% Display results
+disp(" ");
+disp("Average Scores by Grade:");
+for i = 1:length(gradeNames)
+    disp([char(gradeNames(i)), ': ', num2str(average_scores(i))]);
+end
