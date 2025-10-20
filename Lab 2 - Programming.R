@@ -75,21 +75,72 @@ students <- data.frame(
   grade = integer(0),
   score = numeric(0)
 )
-
+student_number <- 30
+mean_alg <- 60
+sd <- 10
+mean_ari <- 75
 
 student_names <- c("Alice", "Bob", "Charlie", "David", "Eva", "Frank", "Grace", "Hannah", "Ivan")
-names <- c("Bella", "Steven", "Brent", "Adam", "Jeremiah", "Conrad", "Alex", "Cole", "Kenny")
+names <- c("Bella", "Steven", "Brent", "Adam", "Jeremiah", "Conrad", "Alex", "Cole", "Kenny", "Khris")
 student_grades <- c("Sophomore", "Junior", "Senior")
 grades <- c("Freshman", "Sophomore", "Junior")
-scores <- sample(60:100, 9 * length(student_grades), replace = TRUE)
-print(scores)
+algebra_scores <- rnorm(n = student_number, mean = mean_alg, sd = sd)
+arithmetic_scores <- rnorm(n = student_number , mean = mean_ari, sd = sd) 
+hist(algebra_scores)
+hist(arithmetic_scores)
 
-students <- data.frame(
+students2 <- data.frame(
   name = rep(names, length(student_grades)),
   grade = rep(student_grades, each = length(names)),
-  score = scores
+  algebra = algebra_scores,
+  arithmetic = arithmetic_scores
 )
+test_score <- algebra_scores + arithmetic_scores
 
-
+students3 <- data.frame(
+   algebra_scores, arithmetic_scores,
+  grade = rep(student_grades, each = length(names))
+)
+  
 average_scores <- tapply(students$score, students$grade, mean)
 print(average_scores)
+
+plot(students3) +
+geom_point(aes(x = grade, y = algebra_scores), color = "red", size = 3) +
+geom_point(aes(x = grade, y = arithmetic_scores), color = "blue", size = 3)
+xlab = grade
+ylab = test_score
+
+students3$grade <- as.numeric(students3$grade)
+
+xlim <- range(students3$grade)
+ylim <- range(students3$algebra_scores, students3$arithmetic_scores)
+
+plot(students3$grade, students3$algebra_scores,
+col = "red",
+pch = 16,
+xlab = "grade", 
+ylab = "test_score",
+ylim = ylim,
+xlim = xlim)
+
+points(students3$grade, students3$arithmetic_scores, 
+       col = "blue",
+       pch = 16)
+
+correlation <- cor(students3$algebra_scores, students3$arithmetic_scores, use = "complete.obs")
+ggplot(students3, aes(x = grade)) +
+  geom_point(aes(y = algebra_scores), color = "red", size = 3) +
+  geom_point(aes(y = arithmetic_scores), color = "blue", size = 3) +
+  labs(x = "Grade", y = "Test Score") 
+  
+ 
+   
+algebra_scores <- rnorm(n = student_number, mean = mean_alg, sd = sd)
+arithmetic_scores <- rnorm(n = student_number , mean = mean_ari, sd = sd) + algebra_scores
+
+ggplot(students3) + 
+geom_point(aes(x = grade, y = algebra_scores), color = "red", size = 3) +
+geom_point(aes(x = grade, y = arithmetic_scores), color = "blue", size = 3)
+xlab = student_grades
+ylab = test_score

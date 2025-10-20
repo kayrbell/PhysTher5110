@@ -2,13 +2,16 @@ library(tidyverse) # data formatting and graphing tools
 
 
 # 1.0. Importing, merging, and relabeling, the data. 
-setwd("~/Instrumentation/")
+setwd("~Desktop/TEXTBOOKS & RESOURCES - PhD/FALL 2025/INSTRUMENTATION/PhysTher5110")
+
 list.files()
 
 list.files("./data")
 list.files("./data/EEG_sub_files/")
 
 setwd("~/GitHub/ReproRehab/data/EEG_sub_files/")
+
+setwd("~/Desktop/TEXTBOOKS & RESOURCES - PhD/FALL 2025/INSTRUMENTATION/PhysTher5110/data/EEG_sub_files")
 
 # Testing out importing data with 1 subject:
 test <- read.csv("./oa01_ec.csv",
@@ -49,7 +52,7 @@ if(1>=2){
 
 file_names[1]
 if(file_names[1]=="oa01_ec.csv"){
-  "Oh yeah!"
+  "TRUE"
 }
 # Evaluates to true, returns Oh yeah!
 
@@ -67,10 +70,10 @@ if(file_names[1]=="OA01_ec.csv"){
 
 # Putting an if else statement inside of our for-lopp
 for(name in file_names) {
-  print(name)
-  subject <- read.csv(name,
+  print(name) #PRINT NAME
+  subject <- read.csv(name, #READING IMPORTED CSV FILE
                       header=TRUE, 
-                      stringsAsFactors = TRUE)
+                      stringsAsFactors = TRUE) 
   
   if (!exists("MASTER")){
     MASTER <- data.frame(subject)
@@ -96,11 +99,32 @@ MASTER <- MASTER %>% select(-X)
 
 head(MASTER)
 
+#Class of variable
+class(MASTER$file_id)
+
 # Break the file id into subject name and the condition
 str_split(MASTER$file_id, "_")[[1]]
 
+
 MASTER$subID <- factor(map_chr(str_split(MASTER$file_id, "_"), 1))
-MASTER$condition <- factor(map_chr(str_split(MASTER$file_id, "_"), 2))
+
+str_split(MASTER$file_id, "_")[[1]]
+
+MASTER$condition <- factor(map_chr(str_split(MASTER$file_id, "_"), 1))
+str_split(MASTER$condition, "_")[[1]][1])
+
+str_extract(str_split(file_names, "_")[[1]][2], "[A-Za-z]+")
+
+MASTER$file_id <- factor(map_chr(str_split(MASTER$file_id, "_"), 1))
+
+MASTER$file_id <- factor(map_chr(str_split(file_names, "_"), 1) [[1]])
+
+str_extract(str_split(file_names, "_")[[1]][1], "[A-Za-z]+")
+
+str_extract([1], "[A-Za-a]+")
+
+
+
 
 map_chr(str_split(MASTER$file_id, "_"), 2)
 str_sub(map_chr(str_split(MASTER$file_id, "_"), 2), 1,2)
@@ -113,7 +137,8 @@ head(MASTER)
 # Export the cleaned PSD data
 getwd()
 
-setwd("~/Instrumentation/data/")
+
+setwd("~/Desktop/TEXTBOOKS & RESOURCES - PhD/FALL 2025/INSTRUMENTATION/PhysTher5110/data")
 write.csv(MASTER, "MASTER_EO_and_EC_EEG.csv")
 
 
