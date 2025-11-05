@@ -1,0 +1,146 @@
+%% Load Data and Set Up
+load fisheriris  % Loads variables: meas (150x4), species (150x1 cell array)
+iris = array2table(meas, 'VariableNames', ...
+    {'SepalLength', 'SepalWidth', 'PetalLength', 'PetalWidth'});
+iris.Species = categorical(species);
+
+speciesNames = categories(iris.Species);
+colorsDark2 = lines(numel(speciesNames));  % colorblind-friendly base
+
+%% 1. Basic Scatterplot (Sepal Dimensions by Species)
+figure('Name','Sepal Dimensions by Species','Position',[100 100 600 400]); hold on
+for i = 1:numel(speciesNames)
+    idx = iris.Species == speciesNames{i};
+    scatter(iris.SepalLength(idx), iris.SepalWidth(idx), ...
+        60, 'MarkerFaceColor', colorsDark2(i,:), 'MarkerEdgeColor', 'none', ...
+        'MarkerFaceAlpha', 0.8)
+end
+title('Sepal Dimensions by Species')
+xlabel('Sepal Length (cm)')
+ylabel('Sepal Width (cm)')
+legend(speciesNames, 'Location', 'best')
+set(gca, 'FontSize', 14, 'Box', 'on')
+hold off
+
+%% 2. Scatterplot + Linear Trend Lines
+figure('Name','Trend Lines','Position',[100 100 600 400]); hold on
+colorsSet1 = [228 26 28; 55 126 184; 77 175 74]/255;  % approximate Set1
+for i = 1:numel(speciesNames)
+    idx = iris.Species == speciesNames{i};
+    scatter(iris.SepalLength(idx), iris.SepalWidth(idx), ...
+        40, 'MarkerFaceColor', colorsSet1(i,:), 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 0.5)
+    % Fit and plot linear regression line
+    mdl = fitlm(iris.SepalLength(idx), iris.SepalWidth(idx));
+    xfit = linspace(min(iris.SepalLength), max(iris.SepalLength), 100);
+    yfit = predict(mdl, xfit');
+    plot(xfit, yfit, 'Color', colorsSet1(i,:), 'LineWidth', 2)
+end
+title('Sepal Length vs Width with Trend Lines')
+xlabel('Sepal Length (cm)')
+ylabel('Sepal Width (cm)')
+legend(speciesNames, 'Location', 'best')
+set(gca, 'FontSize', 14, 'Box', 'on')
+hold off
+
+%% 3. Faceted Plot (Petal Dimensions by Species)
+figure('Name','Faceted Petal Dimensions','Position',[100 100 900 300])
+colorsPaired = [166 206 227; 31 120 180; 178 223 138]/255;
+for i = 1:numel(speciesNames)
+    subplot(1, numel(speciesNames), i)
+    idx = iris.Species == speciesNames{i};
+    scatter(iris.PetalLength(idx), iris.PetalWidth(idx), ...
+        50, 'MarkerFaceColor', colorsPaired(i,:), 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 0.7)
+    title(sprintf('Petal Dimensions: %s', speciesNames{i}))
+    xlabel('Petal Length (cm)')
+    ylabel('Petal Width (cm)')
+    set(gca, 'FontSize', 12, 'Box', 'on')
+end
+sgtitle('Petal Dimensions by Species (Faceted)', 'FontSize', 16)
+
+%% 4. Violin + Boxplot (Distribution of Sepal Length)
+figure('Name','Violin + Boxplot','Position',[100 100 600 400])
+colorsSet2 = [102 194 165; 252 141 98; 141 160 203]/255;
+% Violin plot (requires MATLAB R2021b+)
+violinchart(iris.Species, iris.SepalLength, 'ViolinColor', colorsSet2, 'ViolinAlpha', 0.5)
+hold on
+boxchart(iris.Species, iris.SepalLength, 'BoxWidth', 0.2, ...
+    'BoxFaceAlpha', 0, 'MarkerStyle', 'none', 'LineWidth', 1.2)
+title('Distribution of Sepal Length by Species')
+ylabel('Sepal Length (cm)')
+set(gca, 'FontSize', 14, 'Box', 'on')
+hold off
+
+%% 5. Combine Multi-panel Figure (Patchwork-like Layout)
+figure('Name','Combined Iris Figures','Position',[100 100 1200 800])
+
+subplot(2,2,1)
+for i = 1:numel(speciesNames)
+    idx = iris.Species == speciesNames{i};
+    scatter(iris.SepalLength(idx), iris.SepalWidth(idx), ...
+        40, 'MarkerFaceColor', colorsDark2(i,:), 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 0.8)
+    hold on
+end
+title('Sepal Dimensions by Species')
+xlabel('Sepal Length (cm)')
+ylabel('Sepal Width (cm)')
+
+subplot(2,2,2)
+for i = 1:numel(speciesNames)
+    idx = iris.Species == speciesNames{i};
+    scatter(iris.SepalLength(idx), iris.SepalWidth(idx), ...
+        30, 'MarkerFaceColor', colorsSet1(i,:), 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 0.5)
+    mdl = fitlm(iris.SepalLength(idx), iris.SepalWidth(idx));
+    xfit = linspace(min(iris.SepalLength), max(iris.SepalLength), 100);
+    yfit = predict(mdl, xfit');
+    plot(xfit, yfit, 'Color', colorsSet1(i,:), 'LineWidth', 2)
+    hold on
+end
+title('Trend Lines by Species')
+xlabel('Sepal Length (cm)')
+ylabel('Sepal Width (cm)')
+
+subplot(2,2,3)
+for i = 1:numel(speciesNames)
+    idx = iris.Species == speciesNames{i};
+    scatter(iris.PetalLength(idx), iris.PetalWidth(idx), ...
+        40, 'MarkerFaceColor', colorsPaired(i,:), 'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 0.7)
+    hold on
+end
+title('Petal Dimensions by Species')
+xlabel('Petal Length (cm)')
+ylabel('Petal Width (cm)')
+
+subplot(2,2,4)
+violinchart(iris.Species, iris.SepalLength, 'ViolinColor', colorsSet2, 'ViolinAlpha', 0.5)
+hold on
+boxchart(iris.Species, iris.SepalLength, 'BoxWidth', 0.2, ...
+    'BoxFaceAlpha', 0, 'MarkerStyle', 'none', 'LineWidth', 1.2)
+title('Sepal Length by Species')
+ylabel('Sepal Length (cm)')
+
+sgtitle('Advanced MATLAB Plotting Examples with Iris Dataset', 'FontSize', 18)
+
+%% 6. Export Options
+exportgraphics(gcf, 'iris_figure_vector.pdf', 'ContentType', 'vector')  % Vector format
+exportgraphics(gcf, 'iris_figure_bitmap.png', 'Resolution', 300)        % 300 DPI bitmap
+
+%% 7. Automation Example: Loop through species
+outDir = 'Iris_Individual_Plots';
+if ~exist(outDir, 'dir')
+    mkdir(outDir)
+end
+
+for i = 1:numel(speciesNames)
+    sp = speciesNames{i};
+    idx = iris.Species == sp;
+    figure('Position',[100 100 600 400])
+    scatter(iris.SepalLength(idx), iris.SepalWidth(idx), ...
+        60, 'MarkerFaceColor', [70/255, 130/255, 180/255], ...
+        'MarkerEdgeColor', 'none', 'MarkerFaceAlpha', 0.7)
+    title(sprintf('Sepal Dimensions for %s', sp))
+    xlabel('Sepal Length (cm)')
+    ylabel('Sepal Width (cm)')
+    set(gca, 'FontSize', 14, 'Box', 'on')
+    exportgraphics(gcf, fullfile(outDir, sprintf('iris_sepal_%s.pdf', sp)))
+    close
+end
